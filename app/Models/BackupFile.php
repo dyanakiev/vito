@@ -94,13 +94,15 @@ class BackupFile extends AbstractModel
     public function path(): string
     {
         $storage = $this->backup->storage;
-        $databaseName = $this->backup->database->name;
+        $folderName = $this->backup->type === 'database' 
+            ? $this->backup->database->name 
+            : $this->backup->site->domain;
 
         return match ($storage->provider) {
-            Dropbox::id() => '/'.$databaseName.'/'.$this->name.'.zip',
+            Dropbox::id() => '/'.$folderName.'/'.$this->name.'.zip',
             S3::id(), FTP::id(), Local::id() => implode('/', [
                 rtrim((string) $storage->credentials['path'], '/'),
-                $databaseName,
+                $folderName,
                 $this->name.'.zip',
             ]),
             default => '',

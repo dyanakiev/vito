@@ -80,6 +80,7 @@ abstract class AbstractDatabase extends AbstractService implements Database
                         $fail('You have database user(s) on the server.');
                     }
                     $hasRunningBackup = $this->service->server->backups()
+                        ->where('type', 'database')
                         ->where('status', BackupStatus::RUNNING)
                         ->exists();
                     if ($hasRunningBackup) {

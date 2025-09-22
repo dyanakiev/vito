@@ -18,14 +18,14 @@ import FormSuccessful from '@/components/form-successful';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Backup } from '@/types/backup';
-import EditBackup from '@/pages/backups/components/edit-backup';
+import EditSiteBackup from '@/pages/site-backups/components/edit-site-backup';
 
 function Delete({ backup }: { backup: Backup }) {
   const [open, setOpen] = useState(false);
   const form = useForm();
 
   const submit = () => {
-    form.delete(route('backups.destroy', { server: backup.server_id, backup: backup.id }), {
+    form.delete(route('site-backups.destroy', { server: backup.server_id, site: backup.site_id, backup: backup.id }), {
       onSuccess: () => {
         setOpen(false);
       },
@@ -40,11 +40,11 @@ function Delete({ backup }: { backup: Backup }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete backup [{backup.database.name}]</DialogTitle>
+          <DialogTitle>Delete backup [{backup.site?.domain}]</DialogTitle>
           <DialogDescription className="sr-only">Delete backup</DialogDescription>
         </DialogHeader>
         <p className="p-4">
-          Are you sure you want to this backup: <strong>{backup.database.name}</strong>? All backup files will be deleted and this action cannot be
+          Are you sure you want to this backup: <strong>{backup.site?.domain}</strong>? All backup files will be deleted and this action cannot be
           undone.
         </p>
         <DialogFooter>
@@ -64,12 +64,12 @@ function Delete({ backup }: { backup: Backup }) {
 
 export const columns: ColumnDef<Backup>[] = [
   {
-    accessorKey: 'database_id',
-    header: 'Database',
+    accessorKey: 'site_id',
+    header: 'Site',
     enableColumnFilter: true,
     enableSorting: true,
     cell: ({ row }) => {
-      return <span>{row.original.database?.name || 'N/A'}</span>;
+      return <span>{row.original.site?.domain}</span>;
     },
   },
   {
@@ -78,7 +78,7 @@ export const columns: ColumnDef<Backup>[] = [
     enableColumnFilter: true,
     enableSorting: true,
     cell: ({ row }) => {
-      return <span>{row.original.storage?.name || 'N/A'}</span>;
+      return <span>{row.original.storage?.name}</span>;
     },
   },
   {
@@ -123,10 +123,10 @@ export const columns: ColumnDef<Backup>[] = [
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <EditBackup backup={row.original}>
+              <EditSiteBackup backup={row.original}>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Edit</DropdownMenuItem>
-              </EditBackup>
-              <Link href={route('backup-files', { server: row.original.server_id, backup: row.original.id })}>
+              </EditSiteBackup>
+              <Link href={route('site-backup-files', { server: row.original.server_id, site: row.original.site_id, backup: row.original.id })}>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Files</DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />

@@ -32,7 +32,7 @@ class BackupController extends Controller
 
         return Inertia::render('backups/index', [
             'backups' => BackupResource::collection(
-                $server->backups()->with('lastFile')->simplePaginate(config('web.pagination_size'))
+                $server->backups()->where('type', 'database')->with(['lastFile', 'database', 'storage'])->simplePaginate(config('web.pagination_size'))
             ),
         ]);
     }
@@ -43,7 +43,7 @@ class BackupController extends Controller
         $this->authorize('view', $backup);
 
         return response()->json([
-            'backup' => BackupResource::make($backup),
+            'backup' => BackupResource::make($backup->load(['storage', 'database'])),
             'files' => BackupFileResource::collection($backup->files()->simplePaginate(config('web.pagination_size'))),
         ]);
     }

@@ -15,34 +15,34 @@ class BackupPolicy
     {
         return ($user->isAdmin() || $server->project->users->contains($user))
             && $server->isReady()
-            && $server->database();
+            && ($server->database() || $server->sites()->count() > 0);
     }
 
     public function view(User $user, Backup $backup): bool
     {
         return ($user->isAdmin() || $backup->server->project->users->contains($user))
             && $backup->server->isReady()
-            && $backup->server->database();
+            && ($backup->server->database() || $backup->server->sites()->count() > 0);
     }
 
     public function create(User $user, Server $server): bool
     {
         return ($user->isAdmin() || $server->project->users->contains($user))
             && $server->isReady()
-            && $server->database();
+            && ($server->database() || $server->sites()->count() > 0);
     }
 
     public function update(User $user, Backup $backup): bool
     {
         return ($user->isAdmin() || $backup->server->project->users->contains($user))
             && $backup->server->isReady()
-            && $backup->server->database();
+            && ($backup->server->database() || $backup->server->sites()->count() > 0);
     }
 
     public function delete(User $user, Backup $backup): bool
     {
         return ($user->isAdmin() || $backup->server->project->users->contains($user))
             && $backup->server->isReady()
-            && $backup->server->database();
+            && ($backup->server->database() || $backup->server->sites()->count() > 0);
     }
 }

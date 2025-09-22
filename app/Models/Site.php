@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\RedirectStatus;
+use App\Models\Backup;
 use App\Enums\SiteStatus;
 use App\Enums\SslStatus;
 use App\Exceptions\FailedToDestroyGitHook;
@@ -170,6 +171,14 @@ class Site extends AbstractModel
     public function commands(): HasMany
     {
         return $this->hasMany(Command::class);
+    }
+
+    /**
+     * @return HasMany<Backup, covariant $this>
+     */
+    public function backups(): HasMany
+    {
+        return $this->hasMany(Backup::class)->where('type', 'site');
     }
 
     /**

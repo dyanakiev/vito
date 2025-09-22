@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Database\RestoreBackup;
+use App\Actions\Site\RestoreSiteBackup;
 use App\Http\Resources\BackupFileResource;
 use App\Http\Resources\BackupResource;
 use App\Models\Backup;
 use App\Models\BackupFile;
 use App\Models\Server;
+use App\Models\Site;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,36 +19,36 @@ use Spatie\RouteAttributes\Attributes\Middleware;
 use Spatie\RouteAttributes\Attributes\Post;
 use Spatie\RouteAttributes\Attributes\Prefix;
 
-#[Prefix('servers/{server}/database/backups/{backup}/files')]
+#[Prefix('servers/{server}/sites/{site}/backups/{backup}/files')]
 #[Middleware(['auth', 'has-project'])]
-class BackupFileController extends Controller
+class SiteBackupFileController extends Controller
 {
-    #[Get('/', name: 'backup-files')]
-    public function index(Server $server, Backup $backup): Response
+    #[Get('/', name: 'site-backup-files')]
+    public function index(Server $server, Site $site, Backup $backup): Response
     {
         $this->authorize('viewAny', [BackupFile::class, $backup]);
 
-        return Inertia::render('backups/files', [
-            'backup' => BackupResource::make($backup->load(['storage', 'database'])),
+        return Inertia::render('site-backups/files', [
+            'backup' => BackupResource::make($backup->load(['storage', 'site'])),
             'files' => BackupFileResource::collection(
                 $backup->files()->with('backup')->latest()->simplePaginate(config('web.pagination_size'))
             ),
         ]);
     }
 
-    #[Post('/{backupFile}/restore', name: 'backup-files.restore')]
-    public function restore(Request $request, Server $server, Backup $backup, BackupFile $backupFile): RedirectResponse
+    #[Post('/{backupFile}/restore', name: 'site-backup-files.restore')]
+    public function restore(Request $request, Server $server, Site $site, Backup $backup, BackupFile $backupFile): RedirectResponse
     {
         $this->authorize('update', $backup);
 
-        app(RestoreBackup::class)->restore($backupFile, $request->input());
+        app(RestoreSiteBackup::class)->restore($backupFile, $request->input());
 
         return back()
-            ->with('info', 'Backup is being restored...');
+            ->with('info', 'Site backup is being restored...');
     }
 
-    #[Delete('/{backupFile}', name: 'backup-files.destroy')]
-    public function destroy(Server $server, Backup $backup, BackupFile $backupFile): RedirectResponse
+    #[Delete('/{backupFile}', name: 'site-backup-files.destroy')]
+    public function destroy(Server $server, Site $site, Backup $backup, BackupFile $backupFile): RedirectResponse
     {
         $this->authorize('delete', $backupFile);
 

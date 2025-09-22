@@ -6,6 +6,10 @@ use App\Enums\BackupStatus;
 use Database\Factories\BackupFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Site;
+use App\Models\Server;
+use App\Models\StorageProvider;
+use App\Models\Database;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -14,12 +18,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $server_id
  * @property int $storage_id
  * @property int $database_id
+ * @property int $site_id
  * @property string $interval
  * @property int $keep_backups
+ * @property array $exclusions
  * @property BackupStatus $status
  * @property Server $server
  * @property StorageProvider $storage
  * @property Database $database
+ * @property Site $site
  * @property BackupFile[] $files
  */
 class Backup extends AbstractModel
@@ -32,8 +39,10 @@ class Backup extends AbstractModel
         'server_id',
         'storage_id',
         'database_id',
+        'site_id',
         'interval',
         'keep_backups',
+        'exclusions',
         'status',
     ];
 
@@ -41,7 +50,9 @@ class Backup extends AbstractModel
         'server_id' => 'integer',
         'storage_id' => 'integer',
         'database_id' => 'integer',
+        'site_id' => 'integer',
         'keep_backups' => 'integer',
+        'exclusions' => 'array',
         'status' => BackupStatus::class,
     ];
 
@@ -88,6 +99,14 @@ class Backup extends AbstractModel
     public function database(): BelongsTo
     {
         return $this->belongsTo(Database::class)->withTrashed();
+    }
+
+    /**
+     * @return BelongsTo<Site, covariant $this>
+     */
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Site::class)->withTrashed();
     }
 
     /**

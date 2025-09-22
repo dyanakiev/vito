@@ -19,6 +19,7 @@ class BackupFileResource extends JsonResource
             'backup_id' => $this->backup_id,
             'backup' => new BackupResource($this->whenLoaded('backup')),
             'server_id' => $this->backup->server_id,
+            'site_id' => $this->backup->site_id,
             'name' => $this->name,
             'size' => $this->size,
             'restored_to' => $this->restored_to,

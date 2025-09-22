@@ -5,6 +5,7 @@ export interface BackupFile {
   backup_id: number;
   backup: Backup;
   server_id: number;
+  site_id?: number;
   name: string;
   size: number;
   restored_to: string;

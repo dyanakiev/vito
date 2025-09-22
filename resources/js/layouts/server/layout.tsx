@@ -113,6 +113,11 @@ export default function ServerLayout({ children }: { children: ReactNode }) {
               icon: LockIcon,
             },
             {
+              title: 'Backups',
+              href: route('site-backups', { server: page.props.server.id, site: site.id }),
+              icon: CloudUploadIcon,
+            },
+            {
               title: 'Workers',
               href: route('workers.site', { server: page.props.server.id, site: site.id }),
               icon: ListEndIcon,
